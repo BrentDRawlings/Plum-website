@@ -1194,14 +1194,29 @@
     }
 
     // ── SAVE EMAIL ──
-    function saveEmail(email) {
-      // Store locally for now — connect to your backend/Supabase later
+    async function saveEmail(email) {
+      const SUPABASE_URL = 'https://eprxsamcezyoxcwfeovs.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwcnhzYW1jZXp5b3hjd2Zlb3ZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTk0ODMsImV4cCI6MjA5MjI5NTQ4M30.l_WarYLLTeuqTVzy1RWtTWP9_9-2NKTK5eiVd5WGLgM';
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email: email, source: 'website' })
+        });
+      } catch(e) {
+        console.log('Waitlist save error:', e);
+      }
+      // Also save locally as backup
       const emails = JSON.parse(localStorage.getItem('plum_waitlist') || '[]');
       if (!emails.includes(email)) {
         emails.push(email);
         localStorage.setItem('plum_waitlist', JSON.stringify(emails));
       }
-      console.log('Waitlist email captured:', email);
     }
 
     // ── ENTER KEY SUPPORT ──
